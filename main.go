@@ -18,6 +18,7 @@
 package main
 
 import (
+	"bytes"
 	"crypto/ecdsa"
 	"encoding/hex"
 	"encoding/json"
@@ -36,7 +37,7 @@ const (
 	signingKeyFilename     = "signing-key"
 	registrationIdFilename = "registration-id"
 
-	nvlBaseUrl = "https://nvl.api.coiin.io"
+	nvlBaseUrl = "https://nvl-dev.api.coiin.io"
 )
 
 var (
@@ -102,7 +103,7 @@ func (b *NVLBlock) MarshalForSigning() ([]byte, error) {
 }
 
 func main() {
-	log.Println("NVL independent signer starting")
+	log.Println("Starting NVL independent signer")
 
 	signingKey, err := loadSigningKey()
 	if err != nil {
@@ -129,23 +130,25 @@ func main() {
 	if valid, err := verifyNVLBlock(verifyingKey, nvlBlock); err != nil {
 		log.Fatalf("error verifying NVL block: %s", err)
 	} else if !valid {
-		log.Fatalf("NVL block failed validation")
+		log.Fatalf("NVL Proxy block failed validation")
 	} else {
-		log.Println("NVL passed verification")
+		log.Println("NVL Proxy block passed verification")
 	}
 
-	identNVLBlock := createIndependentNVLBlock(signingKey, nvlBlock)
+	indNVLBlock := createIndependentNVLBlock(signingKey, nvlBlock)
 
-	hash, sig, err := signIndependentNVLBlock(signingKey, identNVLBlock)
+	hash, sig, err := signIndependentNVLBlock(signingKey, indNVLBlock)
 	if err != nil {
 		log.Fatalf("failed to sign independent block: %s", err)
 	}
-	identNVLBlock.Seal.Proofs = hash
-	identNVLBlock.Seal.Signature = sig
+	indNVLBlock.Seal.Proofs = hash
+	indNVLBlock.Seal.Signature = sig
 
-	if err := postIndependentNVLBlock(regId, identNVLBlock); err != nil {
-		log.Fatalf("failed to post idependent block to NVL proxy: %s", err)
+	if err := postIndependentNVLBlock(regId, indNVLBlock); err != nil {
+		log.Fatalf("failed to post independent block to NVL proxy: %s", err)
 	}
+
+	log.Println("Complete!")
 }
 
 func loadSigningKey() (*ecdsa.PrivateKey, error) {
@@ -162,8 +165,12 @@ func loadSigningKey() (*ecdsa.PrivateKey, error) {
 		return nil, err
 	}
 
-	privateKey, err := crypto.HexToECDSA(strings.TrimSpace(string(fileData)))
-	return privateKey, err
+	signingKey, err := crypto.HexToECDSA(strings.TrimSpace(string(fileData)))
+
+	publicKey := signingKey.Public().(*ecdsa.PublicKey)
+	log.Printf("Public Key: %s\n", strings.ToLower(hex.EncodeToString(crypto.FromECDSAPub(publicKey))))
+
+	return signingKey, err
 }
 
 func generateSigningKey() error {
@@ -177,9 +184,6 @@ func generateSigningKey() error {
 	if err != nil {
 		return err
 	}
-
-	publicKey := signingKey.Public().(*ecdsa.PublicKey)
-	log.Printf("New public Key: %s\n", strings.ToLower(hex.EncodeToString(crypto.FromECDSAPub(publicKey))))
 
 	file, err := os.OpenFile(signingKeyFilePath, os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
@@ -237,6 +241,8 @@ func promptForRegistrationId() error {
 }
 
 func loadVerifyingKey() ([]byte, error) {
+	log.Println("Loading NVL Proxy verifying key")
+
 	resp, err := http.Get(nvlBaseUrl + "/api/v1/status")
 	if err != nil {
 		return nil, err
@@ -262,6 +268,8 @@ func loadVerifyingKey() ([]byte, error) {
 }
 
 func fetchLatestNVLBlock() (*NVLBlock, error) {
+	log.Println("Fetching latest NVL Proxy block")
+
 	blockHash, err := fetchLatestNVLBlockHash()
 	if err != nil {
 		return nil, err
@@ -287,6 +295,8 @@ func fetchLatestNVLBlock() (*NVLBlock, error) {
 	}
 
 	block.raw = string(body)
+
+	log.Printf("Latest NVL Proxy Block hash: %s\n", block.Seal.Proofs)
 
 	return block, nil
 }
@@ -337,6 +347,8 @@ func verifyNVLBlock(publicKey []byte, block *NVLBlock) (bool, error) {
 }
 
 func createIndependentNVLBlock(signingKey *ecdsa.PrivateKey, block *NVLBlock) *NVLBlock {
+	log.Println("Creating independent NVL block")
+
 	publicKey := strings.ToLower(hex.EncodeToString(crypto.FromECDSAPub(signingKey.Public().(*ecdsa.PublicKey))))
 
 	return &NVLBlock{
@@ -359,10 +371,57 @@ func signIndependentNVLBlock(signingKey *ecdsa.PrivateKey, block *NVLBlock) (str
 	}
 	hash := crypto.Keccak256Hash(data)
 	signature, err := crypto.Sign(hash.Bytes(), signingKey)
-	return fmt.Sprintf("%064x", hash.Bytes()), fmt.Sprintf("%0130x", signature), err
+	if err != nil {
+		return "", "", err
+	}
+
+	hashStr := fmt.Sprintf("%064x", hash.Bytes())
+	sigStr := fmt.Sprintf("%0130x", signature)
+	log.Println("New independent NVL block signed!")
+	log.Printf("Hash: %s\n", hashStr)
+	log.Printf("Signature: %s\n", sigStr)
+
+	return hashStr, sigStr, nil
 }
 
 func postIndependentNVLBlock(regId string, block *NVLBlock) error {
+	log.Println("Posting new block to NVL Proxy")
+
+	body := struct {
+		Version string    `json:"version"`
+		RegId   string    `json:"regId"`
+		Block   *NVLBlock `json:"block"`
+	}{
+		Version: "1",
+		RegId:   regId,
+		Block:   block,
+	}
+
+	jsonBody, err := json.Marshal(body)
+	if err != nil {
+		return err
+	}
+
+	resp, err := http.Post(
+		nvlBaseUrl+"/api/v1/independent/enqueue",
+		"application/json",
+		bytes.NewBuffer(jsonBody),
+	)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("NVL Proxy resp code: %d\n", resp.StatusCode)
+
+	if resp.StatusCode > 299 {
+		respBody, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+		defer mustClose(resp.Body)
+		fmt.Println(string(respBody))
+	}
+
 	return nil
 }
 

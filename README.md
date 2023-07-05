@@ -6,16 +6,16 @@
 
 Download the newest release of [nvl-independent-signer](https://github.com/Coiin-Blockchain/nvl-independent-signer/releases)
 
-
 ## Register Independent Signer
 
-Run the independent signer, from the console, for the first time will generate a new signing key and ask
-for registration ID.  Once the new signing key is generated. The public key will be printed to console.
-Go to the [independent registration]() in the console. Click "BUTTON NAME" to begin the process. When asked
-for the public key. Paste the public key printed in console in the text box and click "Register". Once
-registered, the console will give you a registration ID. Paste that into your console when prompted.
+Run the independent signer from the terminal. The first time will generate a new signing key and ask
+for a registration ID. Once the new signing key is generated, the public key will be printed to the terminal.
 
-After the signing key is generated and registration ID is saved. You can run `independent-signer` at any
+Go to the [independent registration]() page on the coiin console. Click "BUTTON NAME" to begin the process. 
+When prompted, paste the public key printed in console into the text box and click "Register". Once
+registered, the console will give you a registration ID. Paste that into your terminal when prompted.
+
+After the signing key is generated and registration ID is saved, you can run `independent-signer` at any
 time to sign the latest NVL Proxy block and post it to the NVL Proxy.
 
 It is recommended to set up a cron job to execute the `independent-signer` once every 30 minutes

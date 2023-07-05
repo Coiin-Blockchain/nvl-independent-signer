@@ -31,11 +31,13 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 const (
 	signingKeyFilename     = "signing-key"
 	registrationIdFilename = "registration-id"
+	priorBlockHashFilename = "prior-block-hash"
 
 	nvlBaseUrl = "https://nvl-dev.api.coiin.io"
 )
@@ -45,6 +47,7 @@ var (
 
 	signingKeyFilePath     string
 	registrationIdFilePath string
+	priorBlockHashFilePath string
 )
 
 func init() {
@@ -59,6 +62,7 @@ func init() {
 
 	signingKeyFilePath = filepath.Join(dataDir, signingKeyFilename)
 	registrationIdFilePath = filepath.Join(dataDir, registrationIdFilename)
+	priorBlockHashFilePath = filepath.Join(dataDir, priorBlockHashFilename)
 }
 
 type NVLBlockHeader struct {
@@ -135,7 +139,12 @@ func main() {
 		log.Println("NVL Proxy block passed verification")
 	}
 
-	indNVLBlock := createIndependentNVLBlock(signingKey, nvlBlock)
+	priorBlockHash, err := loadPriorBlockHash()
+	if err != nil {
+		log.Fatalf("failed to load prior block hash %s", err)
+	}
+
+	indNVLBlock := createIndependentNVLBlock(signingKey, nvlBlock, priorBlockHash)
 
 	hash, sig, err := signIndependentNVLBlock(signingKey, indNVLBlock)
 	if err != nil {
@@ -146,6 +155,10 @@ func main() {
 
 	if err := postIndependentNVLBlock(regId, indNVLBlock); err != nil {
 		log.Fatalf("failed to post independent block to NVL proxy: %s", err)
+	}
+
+	if err := savePriorBlockHash(indNVLBlock.Seal.Proofs); err != nil {
+		log.Fatalf("failed to save prior block hash: %s", err)
 	}
 
 	log.Println("Complete!")
@@ -346,7 +359,22 @@ func verifyNVLBlock(publicKey []byte, block *NVLBlock) (bool, error) {
 	return crypto.VerifySignature(publicKey, hash.Bytes(), sig[:len(sig)-1]), nil
 }
 
-func createIndependentNVLBlock(signingKey *ecdsa.PrivateKey, block *NVLBlock) *NVLBlock {
+func loadPriorBlockHash() (string, error) {
+	log.Println("Loading prior block hash")
+	if _, err := os.Stat(priorBlockHashFilePath); err != nil {
+		log.Println("No prior block hash, must be first time executed")
+		return "", nil
+	}
+
+	fileData, err := os.ReadFile(priorBlockHashFilePath)
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSpace(string(fileData)), nil
+}
+
+func createIndependentNVLBlock(signingKey *ecdsa.PrivateKey, block *NVLBlock, priorHash string) *NVLBlock {
 	log.Println("Creating independent NVL block")
 
 	publicKey := strings.ToLower(hex.EncodeToString(crypto.FromECDSAPub(signingKey.Public().(*ecdsa.PublicKey))))
@@ -355,8 +383,8 @@ func createIndependentNVLBlock(signingKey *ecdsa.PrivateKey, block *NVLBlock) *N
 		Version: "1",
 		Header: &NVLBlockHeader{
 			Type:       "INDEPENDENT",
-			PriorBlock: block.Header.PriorBlock,
-			Timestamp:  block.Header.Timestamp,
+			PriorBlock: priorHash,
+			Timestamp:  fmt.Sprintf("%d", time.Now().Unix()),
 			PublicKey:  publicKey,
 		},
 		Blocks: []string{block.raw},
@@ -411,7 +439,7 @@ func postIndependentNVLBlock(regId string, block *NVLBlock) error {
 		return err
 	}
 
-	fmt.Printf("NVL Proxy resp code: %d\n", resp.StatusCode)
+	log.Printf("NVL Proxy resp code: %d\n", resp.StatusCode)
 
 	if resp.StatusCode > 299 {
 		respBody, err := io.ReadAll(resp.Body)
@@ -419,10 +447,15 @@ func postIndependentNVLBlock(regId string, block *NVLBlock) error {
 			return err
 		}
 		defer mustClose(resp.Body)
-		fmt.Println(string(respBody))
+		log.Println(string(respBody))
 	}
 
 	return nil
+}
+
+func savePriorBlockHash(hash string) error {
+	log.Printf("Saving prior block hash: %s\n", hash)
+	return os.WriteFile(priorBlockHashFilePath, []byte(hash), 0600)
 }
 
 type Closer interface {

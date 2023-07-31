@@ -36,17 +36,17 @@ import (
 
 const (
 	signingKeyFilename     = "signing-key"
-	registrationIdFilename = "registration-id"
 	priorBlockHashFilename = "prior-block-hash"
 
-	nvlBaseUrl = "https://nvl-dev.api.coiin.io"
+	nvlBaseUrl = "https://nvl.api.coiin.io"
 )
 
 var (
+	Version = "v0.0.0"
+
 	dataDir string
 
 	signingKeyFilePath     string
-	registrationIdFilePath string
 	priorBlockHashFilePath string
 )
 
@@ -61,7 +61,6 @@ func init() {
 	dataDir = filepath.Join(configDir, "coiin", "nvl", "independent-signer")
 
 	signingKeyFilePath = filepath.Join(dataDir, signingKeyFilename)
-	registrationIdFilePath = filepath.Join(dataDir, registrationIdFilename)
 	priorBlockHashFilePath = filepath.Join(dataDir, priorBlockHashFilename)
 }
 
@@ -107,16 +106,11 @@ func (b *NVLBlock) MarshalForSigning() ([]byte, error) {
 }
 
 func main() {
-	log.Println("Starting NVL independent signer")
+	log.Printf("Starting NVL independent signer %s\n", Version)
 
 	signingKey, err := loadSigningKey()
 	if err != nil {
 		log.Fatalf("failed to load signing key: %s", err)
-	}
-
-	regId, err := loadRegistrationId()
-	if err != nil {
-		log.Fatalf("failed to load registration id: %s", err)
 	}
 
 	verifyingKey, err := loadVerifyingKey()
@@ -153,7 +147,7 @@ func main() {
 	indNVLBlock.Seal.Proofs = hash
 	indNVLBlock.Seal.Signature = sig
 
-	if err := postIndependentNVLBlock(regId, indNVLBlock); err != nil {
+	if err := postIndependentNVLBlock(indNVLBlock); err != nil {
 		log.Fatalf("failed to post independent block to NVL proxy: %s", err)
 	}
 
@@ -210,46 +204,6 @@ func generateSigningKey() error {
 	}
 
 	log.Println("New signing key generated")
-	return nil
-}
-
-func loadRegistrationId() (string, error) {
-	log.Println("Loading registration ID")
-	if _, err := os.Stat(registrationIdFilePath); err != nil {
-		log.Println("Registration ID not found")
-		if err := promptForRegistrationId(); err != nil {
-			return "", err
-		}
-	}
-
-	fileData, err := os.ReadFile(registrationIdFilePath)
-	if err != nil {
-		return "", err
-	}
-
-	return strings.TrimSpace(string(fileData)), nil
-}
-
-func promptForRegistrationId() error {
-	regId := ""
-
-	fmt.Print("Please enter the registration ID: ")
-	if _, err := fmt.Scan(&regId); err != nil {
-		return err
-	}
-
-	file, err := os.OpenFile(registrationIdFilePath, os.O_WRONLY|os.O_CREATE, 0600)
-	if err != nil {
-		return err
-	}
-	defer mustClose(file)
-
-	_, err = file.WriteString(regId)
-	if err != nil {
-		return err
-	}
-
-	fmt.Print("Registration ID saved!")
 	return nil
 }
 
@@ -412,16 +366,14 @@ func signIndependentNVLBlock(signingKey *ecdsa.PrivateKey, block *NVLBlock) (str
 	return hashStr, sigStr, nil
 }
 
-func postIndependentNVLBlock(regId string, block *NVLBlock) error {
+func postIndependentNVLBlock(block *NVLBlock) error {
 	log.Println("Posting new block to NVL Proxy")
 
 	body := struct {
 		Version string    `json:"version"`
-		RegId   string    `json:"regId"`
 		Block   *NVLBlock `json:"block"`
 	}{
 		Version: "1",
-		RegId:   regId,
 		Block:   block,
 	}
 

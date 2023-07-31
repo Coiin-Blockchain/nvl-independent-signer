@@ -11,7 +11,7 @@ Download the newest release of [nvl-independent-signer](https://github.com/Coiin
 Run the independent signer from the terminal. The first time will generate a new signing key and ask
 for a registration ID. Once the new signing key is generated, the public key will be printed to the terminal.
 
-Go to the [independent registration]() page on the coiin console. Click "BUTTON NAME" to begin the process. 
+Go to the [independent registration](https://coiin.io/console/validationnodes) page on the coiin console. Click "BUTTON NAME" to begin the process. 
 When prompted, paste the public key printed in console into the text box and click "Register". Once
 registered, the console will give you a registration ID. Paste that into your terminal when prompted.
 

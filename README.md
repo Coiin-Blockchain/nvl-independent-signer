@@ -1,8 +1,8 @@
 # Getting Started
 
 ## Requirements
-* Create Coiin [console]() account
-* [Register]() with NVL Proxy
+* Create Coiin [console](https://coiin.io/console) account
+* [Register](https://coiin.io/console/verificationnodes) with NVL Proxy
 
 Download the newest release of [nvl-independent-signer](https://github.com/Coiin-Blockchain/nvl-independent-signer/releases)
 

@@ -3,6 +3,7 @@
 ## Requirements
 * Create a [Coiin Console](https://coiin.io/console) account
 * Download the newest release of [nvl-independent-signer](https://github.com/Coiin-Blockchain/nvl-independent-signer/releases) for your OS
+    - Note: macOS users should use the Darwin build
 
 ## Register Independent Signer
 

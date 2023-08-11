@@ -7,8 +7,8 @@
 
 ## Register Independent Signer
 
-1. From the terminal, navigate to the folder where you downloaded, and run the independent signer script. The first time will generate a new signing key. Once the new signing key is generated, the Public Key will be printed to the terminal. Copy the Public Key.
-    - Note: Some operating systems like macOS may require updating default security settings and granting execute permission to execute the `independent-signer` script.
+1. From the terminal, navigate to the folder where you downloaded the file and execute the independent signer script. The first time will generate a new signing key. Once the new signing key is generated, the Public Key will be printed to the terminal. Copy the Public Key.
+    - Note: Some operating systems like macOS may require updating default security settings and granting execute permission to run the `independent-signer` script.
 
 2. Navigate to the [Register an Independent Node](https://coiin.io/console/verificationnodes) section on the Network Validation Layer Nodes page of the Coiin Console. Paste the Public Key printed in the terminal window from Step 1 into the "Enter Public Key" text box and click the "Register Node" button.
 

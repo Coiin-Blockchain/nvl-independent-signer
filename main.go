@@ -341,7 +341,7 @@ func createIndependentNVLBlock(signingKey *ecdsa.PrivateKey, block *NVLBlock, pr
 			Timestamp:  fmt.Sprintf("%d", time.Now().Unix()),
 			PublicKey:  publicKey,
 		},
-		Blocks: []string{block.raw},
+		Blocks: []string{block.Seal.Proofs},
 		Seal:   &NVLBlockSeal{},
 	}
 }

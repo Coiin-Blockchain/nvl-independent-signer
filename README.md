@@ -45,7 +45,12 @@ Your Public and Signing Keys are saved in:
         ```
         
     - Or if you're unsure of where to locate the file path you can simply drag and drop the file onto the Terminal and the file path will be shown.
-    - Execute the script by typing the filename independent-signer_darwin_amd64 and pressing return
+    - Execute the script by typing the filename and pressing return, e.g.
+
+            ```
+            independent-signer_darwin_amd64
+            ```
+
         - Note: if you receive an error, you may need to re-permission the script as an executable file by typing:
 
             ```

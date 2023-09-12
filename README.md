@@ -40,11 +40,15 @@ Your Public and Signing Keys are saved in:
 2. Open a new Terminal window (Terminal can be found in the Applications > Utilities folder)
     - Navigate to the directory where you saved the script by typing
 
-cd [the_filepath_you_saved_the_script_to]
+    ```
+    cd [the_filepath_you_saved_the_script_to]
+    ```
 Or if you're unsure of where to locate the file path you can simply drag and drop the file onto the Terminal and the file path will be shown.
     - Execute the script by typing the filename independent-signer_darwin_amd64 and pressing return
         - Note: if you receive an error, you may need to re-permission the script as an executable file by typing:
-chmod +x independent-signer_darwin_amd64 
+    ```
+    chmod +x independent-signer_darwin_amd64 
+    ```
 and then continue by re-executing step 2a. 
         - Or if you receive an error, you may need to allow the file to be opened by typing:
 On your Mac, choose Apple menu  > System Settings, then click Privacy & Security  in the sidebar. (You may need to scroll down.)
@@ -62,14 +66,18 @@ Open Privacy & Security settings. Go to Security, click the pop-up menu next to 
 4. You’re almost done! Now you just need to run a cron job so that the Independent Signer script automatically runs every 30 minutes and signs each new block created by the NVL. Navigate back to your Terminal window from earlier.
 
     - Type this command:
-``` crontab -e
-```
-    - This will open the cron editor. Now type  ( shift i), to enter insert mode or vim editor where you can then type the command
+    ```
+    crontab -e
+    ```
+    - This will open the cron editor. Now type  (shift i), to enter insert mode or vim editor where you can then type the command
 */30 * * * * [the_filepath_you_saved_the_script_to] Or if you're unsure of where to locate the file path you can simply drag and drop the file onto the Terminal and the file path will be shown. Make sure you use a space between the last asterisk and file name when you drop the file in.
 
     - If you're not in command mode (where you can type commands directly into vim), press the Esc key on your keyboard. This ensures you're in command mode.
 Type the following and press return to save and close the cron editor
-:wq  (The :wq command is a combination of two commands: :w (which saves the changes) and :q (which quits the editor).
+    ```
+    :wq
+    ```
+(The :wq command is a combination of two commands: :w (which saves the changes) and :q (which quits the editor).
 
 
 5. That’s it! Now your computer will run the Independent Signer script every 30 minutes, fetching and signing the most recent NVL block from the Coiin blockchain. You can see the latest block that was signed on your coiin console account.

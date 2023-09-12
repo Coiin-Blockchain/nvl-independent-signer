@@ -88,10 +88,19 @@ Type the following and press return to save and close the cron editor
 Note: if you lose access to your Coiin Console account and need to reset your password, you will also need to re-register your independent node by first clearing the contents of ~/.config/coiin/nvl/independent-signer
 and return to Step 2 of the process above to create a new Public Key for your Independent node.
 
-To verify if your crontab is functioning, 
-Type this command:
- crontab -l  
-It should read something similar to: _*30/* * * * /Users/~/[the_filepath_you_saved_the_script_to]/independent-signer_darwin_amd64_
+To verify if your crontab is functioning, type this command:
+
+```
+crontab -l
+```
+
+It should read something similar to: 
+
+```
+_*30/* * * * /Users/~/[the_filepath_you_saved_the_script_to]/independent-signer_darwin_amd64_
+```
+
+Your Public and Signing Keys are saved in:
 
     # Linux/Mac
     ~/.config/coiin/nvl/independent-signer

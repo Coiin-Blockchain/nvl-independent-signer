@@ -34,7 +34,7 @@ Your Public and Signing Keys are saved in:
 ### Linux and macOS Installation Instructions
 
 1. From a web browser, download the Independent Signer script by navigating to: https://github.com/Coiin-Blockchain/nvl-independent-signer/releases
-    - Select the script for your computer, e.g. independent-signer_darwin_amd64 for macOS users
+    - Select the script for your computer, e.g. _independent-signer_darwin_amd64_ for macOS users
     - Save this to a preferred location where it won’t be deleted.
 
 2. Open a new Terminal window (Terminal can be found in the Applications > Utilities folder)
@@ -97,7 +97,7 @@ crontab -l
 It should read something similar to: 
 
 ```
-_*30/* * * * /Users/~/[the_filepath_you_saved_the_script_to]/independent-signer_darwin_amd64_
+*30/* * * * /Users/~/[the_filepath_you_saved_the_script_to]/independent-signer_darwin_amd64
 ```
 
 Your Public and Signing Keys are saved in:

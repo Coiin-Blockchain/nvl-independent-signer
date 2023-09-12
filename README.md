@@ -43,12 +43,13 @@ Your Public and Signing Keys are saved in:
         ```
         cd [the_filepath_you_saved_the_script_to]
         ```
+        
     - Or if you're unsure of where to locate the file path you can simply drag and drop the file onto the Terminal and the file path will be shown.
     - Execute the script by typing the filename independent-signer_darwin_amd64 and pressing return
         - Note: if you receive an error, you may need to re-permission the script as an executable file by typing:
-        ```
-        chmod +x independent-signer_darwin_amd64 
-        ```
+            ```
+            chmod +x independent-signer_darwin_amd64 
+            ```
         and then continue by re-executing step 2a. 
         - Or if you receive an error, you may need to allow the file to be opened by typing:
             On your Mac, choose Apple menu  > System Settings, then click Privacy & Security  in the sidebar. (You may need to scroll down.)
@@ -78,7 +79,7 @@ Type the following and press return to save and close the cron editor
         ```
         :wq
         ```
-(The :wq command is a combination of two commands: :w (which saves the changes) and :q (which quits the editor).
+        (The :wq command is a combination of two commands: :w (which saves the changes) and :q (which quits the editor).
 
 
 5. That’s it! Now your computer will run the Independent Signer script every 30 minutes, fetching and signing the most recent NVL block from the Coiin blockchain. You can see the latest block that was signed on your coiin console account.

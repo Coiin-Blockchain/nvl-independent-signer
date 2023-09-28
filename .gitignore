@@ -3,3 +3,5 @@
 build/*
 *.DS_Store
 installer/windows/*.exe
+installer/macos/*_amd64
+installer/macos/*_macos

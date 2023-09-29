@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the current path
-current_path=.
+current_path=$(pwd)
 
 # Define the full path to the executable
 executable_path="$current_path/independent-signer_darwin_amd64"
@@ -23,6 +23,8 @@ cat << EOF > "$task_name.plist"
     </array>
     <key>StartInterval</key>
     <integer>1800</integer>
+    <key>RunAtLoad</key>
+    <true/>
 </dict>
 </plist>
 EOF
@@ -31,7 +33,7 @@ EOF
 # If something goes wrong, you can try this: launchctl debug IndependentSigner --stderr error.log && launchctl kickstart -k IndependentSigner
 # This will run the program in debug mode and save the output to error.log
 # Load the launchd plist
-launchctl remove "$task_name.plist"
+launchctl remove "$task_name"
 launchctl load -F "$task_name.plist"
 
 # Run the program and save its output to a temporary file

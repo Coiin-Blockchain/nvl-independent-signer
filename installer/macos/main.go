@@ -7,9 +7,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"os/user"
 	"path/filepath"
-	"time"
 )
 
 // This project should be able to embed the independent-signer_darwin_amd64 while building, and extract it when it's running, than run a .sh file that will start the independent-signer_darwin_amd64
@@ -21,20 +19,15 @@ var independentSigner embed.FS
 var script embed.FS
 
 func main() {
-	// Get the current user's home directory
-	usr, err := user.Current()
+	// Get the default path for the independent-signer_windows_amd64.exe
+	configDir, err := os.UserConfigDir()
 	if err != nil {
-		log.Fatal(err)
+		configDir, err = os.Getwd()
+		if err != nil {
+			log.Fatal("could not find working directory")
+		}
 	}
-
-	// Default path for the independent-signer_darwin_amd64
-	defaultPath := filepath.Join(usr.HomeDir, "Independent-Signer")
-
-	// Create the directory if it does not exist
-	err = os.MkdirAll(defaultPath, 0755)
-	if err != nil {
-		log.Fatal(err)
-	}
+	defaultPath := filepath.Join(configDir, "coiin", "nvl", "independent-signer")
 
 	// Set the paths for the temporary files
 	tempExe := filepath.Join(defaultPath, "independent-signer_darwin_amd64")
@@ -67,9 +60,6 @@ func main() {
 	// Print a message to the console
 	fmt.Print("Installing Independent Signer ...\n\n")
 
-	// Wait for 2 seconds
-	time.Sleep(2 * time.Second)
-
 	// Change the working directory to defaultPath
 	err = os.Chdir(defaultPath)
 	if err != nil {
@@ -85,6 +75,15 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	filePath := fmt.Sprintf("%s/%s", defaultPath, "instructions")
+	err = os.WriteFile(filePath, []byte(out.String()), 0644)
+	if err != nil {
+		fmt.Printf("Error writing to file: %v\n", err)
+		return
+	}
+	cmd = exec.Command("open", filePath)
+	cmd.Run()
 
 	// Print the output of the script to the console
 	fmt.Println(out.String())

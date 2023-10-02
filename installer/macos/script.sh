@@ -36,10 +36,6 @@ EOF
 launchctl remove "$task_name"
 launchctl load -F "$task_name.plist"
 
-# Display a message indicating that the program has been installed
-echo "The Independent Signer has been installed and will run every 30 minutes."
-echo ""
-
 # Run the program and save its output to a temporary file
 echo ""
 "$executable_path" > temp.txt 2>&1

@@ -15,4 +15,4 @@ build:
 	rm rsrc_windows_amd64.syso
 
 	# rename the installer (the installer name should end with "_windows_amd64.exe")
-	mv independent-signer-installer_windows_amd64.exe independent-signer-installer.exe
+	mv independent-signer-installer_windows_amd64.exe independent-signer_windows_amd64.exe

@@ -20,14 +20,15 @@ var independentSigner embed.FS
 var script embed.FS
 
 func main() {
-	// Default path for the independent-signer_windows_amd64.exe
-	defaultPath := `C:\Users\Public\Independent-Signer`
-
-	// Create the directory if it does not exist
-	err := os.MkdirAll(defaultPath, 0755)
+	// Get the default path for the independent-signer_windows_amd64.exe
+	configDir, err := os.UserConfigDir()
 	if err != nil {
-		log.Fatal(err)
+		configDir, err = os.Getwd()
+		if err != nil {
+			log.Fatal("could not find working directory")
+		}
 	}
+	defaultPath := filepath.Join(configDir, "coiin", "nvl", "independent-signer")
 
 	// Set the paths for the temporary files
 	tempExe := filepath.Join(defaultPath, "independent-signer_windows_amd64.exe")
@@ -71,6 +72,7 @@ func main() {
 
 	// Run the script.bat
 	cmd := exec.Command(tempBat)
+
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &out

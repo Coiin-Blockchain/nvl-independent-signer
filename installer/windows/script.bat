@@ -10,7 +10,8 @@ set "executable_path=%current_path%\independent-signer_windows_amd64.exe"
 set "task_name=IndependentSigner"
 
 :: Create a scheduled task to run the program every 30 minutes
-schtasks /create /tn "%task_name%" /tr "%executable_path%" /sc minute /mo 30 /F
+schtasks /create /tn "%task_name%" /tr "%executable_path%" /sc minute /mo 30 /np /F
+
 
 :: Run the program and save its output to a temporary file
 echo.
@@ -38,3 +39,6 @@ echo.
 
 :: Clean up temporary files (optional)
 del temp.txt extracted.txt
+
+:: Pause the script to allow the user to read the output
+pause

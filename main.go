@@ -242,7 +242,7 @@ func fetchLatestNVLBlock() (*NVLBlock, error) {
 		return nil, err
 	}
 
-	resp, err := http.Get(nvlBaseUrl + "/api/v1/blocks/" + blockHash)
+	resp, err := http.Get(nvlBaseUrl + "/api/v1/blocks/" + blockHash + "?raw=true")
 	if err != nil {
 		return nil, err
 	}

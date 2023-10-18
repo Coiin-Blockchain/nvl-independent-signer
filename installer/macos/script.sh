@@ -7,10 +7,11 @@ current_path=$(pwd)
 executable_path="$current_path/independent-signer_darwin_amd64"
 
 # Define the name of the scheduled task
-task_name="IndependentSigner"
+task_name="com.coiin.independent-signer"
+task_plist="~/Library/LaunchAgents/com.coiin.independent-signer.plist"
 
 # Create a launchd plist to run the program every 30 minutes
-cat << EOF > "$task_name.plist"
+cat << EOF > ~/Library/LaunchAgents/com.coiin.independent-signer.plist
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -34,7 +35,7 @@ EOF
 # This will run the program in debug mode and save the output to error.log
 # Load the launchd plist
 launchctl remove "$task_name"
-launchctl load -F "$task_name.plist"
+launchctl load -F ~/Library/LaunchAgents/com.coiin.independent-signer.plist
 
 # Run the program and save its output to a temporary file
 echo ""
@@ -52,5 +53,5 @@ touch public-key && echo -n "$publickey" > public-key
 # Copy the extracted Public Key value to the clipboard
 echo "$publickey" | pbcopy
 
-# Clean up temporary files (optional)
-rm temp.txt extracted.txt "$task_name.plist"
+# Clean up temporary files
+rm temp.txt extracted.txt

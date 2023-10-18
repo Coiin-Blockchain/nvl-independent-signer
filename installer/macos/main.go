@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"embed"
 	"fmt"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -12,6 +13,8 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
+
+	"github.com/atotto/clipboard"
 )
 
 //go:embed independent-signer_darwin_amd64
@@ -20,12 +23,7 @@ var independentSigner embed.FS
 //go:embed script.sh
 var script embed.FS
 
-func uninstall() error {
-	cmd := exec.Command("launchctl", "remove", "IndependentSigner")
-	return cmd.Run()
-}
-
-func install() (string, error) {
+func getDefaultPath() (string, error) {
 	// Get the default path for the independent-signer_windows_amd64.exe
 	configDir, err := os.UserConfigDir()
 	if err != nil {
@@ -34,7 +32,20 @@ func install() (string, error) {
 			return "", fmt.Errorf("could not find working directory: %w", err)
 		}
 	}
-	defaultPath := filepath.Join(configDir, "coiin", "nvl", "independent-signer")
+	return filepath.Join(configDir, "coiin", "nvl", "independent-signer"), nil
+}
+
+func uninstall() error {
+	cmd := exec.Command("launchctl", "remove", "IndependentSigner")
+	return cmd.Run()
+}
+
+func install() (string, error) {
+
+	defaultPath, err := getDefaultPath()
+	if err != nil {
+		return "", err
+	}
 
 	// Set the paths for the temporary files
 	tempExe := filepath.Join(defaultPath, "independent-signer_darwin_amd64")
@@ -92,27 +103,6 @@ func install() (string, error) {
 	return out.String(), nil
 }
 
-func uninstallGUI(installer *widget.Label) {
-	defer showCloseButton(installer)
-	err := uninstall()
-	if err != nil {
-		installer.SetText(fmt.Sprintf("An error occurred while uninstalling Independent Signer: %s", err))
-		return
-	}
-	installer.SetText("Independent Signer was uninstalled successfully!")
-}
-
-func installGUI(installer *widget.Label) {
-	defer showCloseButton(installer)
-	installer.SetText("Installing Independent Signer ...")
-	msg, err := install()
-	if err != nil {
-		installer.SetText(fmt.Sprintf("An error occurred while installing Independent Signer: %s", err))
-		return
-	}
-	installer.SetText(fmt.Sprintf("%s\n\nIndependent Signer was installed successfully!", msg))
-}
-
 func showCloseButton(installer *widget.Label) {
 	w.SetContent(container.NewVBox(
 		installer,
@@ -120,15 +110,100 @@ func showCloseButton(installer *widget.Label) {
 			os.Exit(1)
 		}),
 	))
+	w.Resize(fyne.NewSize(0, 0))
 }
+
+func copyPublicKeyToClipboard() (string, error) {
+	defaultPath, err := getDefaultPath()
+	if err != nil {
+		return "", err
+	}
+	publicKeyFile := filepath.Join(defaultPath, "public-key")
+
+	// Read the public key from the default path
+	content, err := os.ReadFile(publicKeyFile)
+	if err != nil {
+		return "", err
+	}
+	content = bytes.TrimSpace(content)
+
+	err = clipboard.WriteAll(string(content))
+	if err != nil {
+		return "", err
+	}
+
+	return string(content), nil
+}
+
+func uninstallGUI(installer *widget.Label) {
+	defer showCloseButton(installer)
+	err := uninstall()
+	if err != nil {
+		installer.SetText(fmt.Sprintf("An error occurred while uninstalling %s: %s", appName, err))
+		return
+	}
+	installer.SetText(fmt.Sprintf("%s was uninstalled successfully!", appName))
+}
+
+func installGUI() {
+	gui := widget.NewLabel(fmt.Sprintf("Installing %s ...", appName))
+	w.SetContent(container.NewVBox(
+		gui,
+		widget.NewProgressBarInfinite(),
+	))
+	w.Resize(fyne.NewSize(0, 0))
+
+	_, err := install()
+	if err != nil {
+		gui = widget.NewLabel(fmt.Sprintf("An error occurred while installing %s: %s", appName, err))
+		w.SetContent(container.NewVBox(
+			gui,
+			widget.NewButton("Close", func() {
+				os.Exit(1)
+			}),
+		))
+		return
+	}
+
+	url := &url.URL{
+		Scheme: "https",
+		Host:   "coiin.io",
+		Path:   "/console/verificationnodes",
+	}
+
+	publicKey, _ := copyPublicKeyToClipboard()
+	w.SetContent(container.NewVBox(
+		widget.NewLabel(fmt.Sprintf("The Public Key has been copied to the clipboard:\n%s", publicKey)),
+		widget.NewHyperlink("\nNavigate to the Network Validation Layer Nodes page on the Coiin Console.", url),
+		widget.NewLabel("Paste the Public Key printed in the terminal window into the \"Enter Public Key\" text box and click the \"Register Node\" button."),
+		widget.NewLabel(fmt.Sprintf("\n%s was installed successfully", appName)),
+		widget.NewButton("Close", func() {
+			os.Exit(1)
+		}),
+	))
+}
+
+func copyPublicKeyGUI(installer *widget.Label) {
+	defer showCloseButton(installer)
+	publickey, err := copyPublicKeyToClipboard()
+	if err != nil {
+		installer.SetText(fmt.Sprintf("An error occurred while installing %s: %s", appName, err))
+		return
+	}
+	installer.SetText(fmt.Sprintf("The Public Key has being copied to your clipboard: \n\n%s", publickey))
+}
+
+const (
+	appName = "Coiin Network Validator"
+)
 
 var (
 	a = app.New()
-	w = a.NewWindow("independent-signer-installer")
+	w = a.NewWindow(appName)
 )
 
 func main() {
-	w.Resize(fyne.NewSize(250, 300))
+	w.Resize(fyne.NewSize(0, 0))
 
 	// Check if IndependentSigner is already installed
 	cmd := exec.Command("launchctl", "list", "IndependentSigner")
@@ -136,25 +211,28 @@ func main() {
 	if err == nil {
 		if len(output) > 0 {
 
-			installer := widget.NewLabel("IndependentSigner is already installed. Do you want to uninstall or override the current version?")
+			installer := widget.NewLabel(fmt.Sprintf("%s is already installed.\nDo you want to uninstall or override the current version?", appName))
 			w.SetContent(container.NewVBox(
 				installer,
 				widget.NewButton("1. Override the current version", func() {
-					installGUI(installer)
+					installGUI()
 				}),
 				widget.NewButton("2. Uninstall the current version", func() {
 					uninstallGUI(installer)
+				}),
+				widget.NewButton("3. Copy your Public Key to the clipboard", func() {
+					copyPublicKeyGUI(installer)
 				}),
 			))
 
 		}
 
 	} else {
-		installer := widget.NewLabel("Do you want to install the IndependentSigner?")
+		installer := widget.NewLabel(fmt.Sprintf("Do you want to install the %s?", appName))
 		w.SetContent(container.NewVBox(
 			installer,
 			widget.NewButton("1. Yes", func() {
-				installGUI(installer)
+				installGUI()
 			}),
 		))
 

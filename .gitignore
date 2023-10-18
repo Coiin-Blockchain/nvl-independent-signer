@@ -6,5 +6,5 @@ installer/windows/*.exe
 installer/macos/independent-signer-installer.app/Contents/MacOS/*
 *.dmg
 bin/*
-installer/macos/independent-signer_darwin_amd64.app/Contents/_CodeSignature/CodeResources
-installer/macos/independent-signer_darwin_amd64.app/Contents/MacOS/independent-signer_darwin_amd64
+installer/macos/*.app/Contents/_CodeSignature/CodeResources
+installer/macos/*.app/Contents/MacOS/*

@@ -2,7 +2,10 @@ module github.com/Coiin-Blockchain/nvl-independent-signer/installer/macos
 
 go 1.21.3
 
-require fyne.io/fyne/v2 v2.4.1
+require (
+	fyne.io/fyne/v2 v2.4.1
+	github.com/atotto/clipboard v0.1.4
+)
 
 require (
 	fyne.io/systray v1.10.1-0.20230722100817-88df1e0ffa9a // indirect

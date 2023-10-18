@@ -46,18 +46,11 @@ grep -o "Public Key: [a-zA-Z0-9]\{130\}" temp.txt > extracted.txt
 # Extract the Public Key value from the line
 publickey=$(head -n 1 extracted.txt | cut -c 13-)
 
+# Save the Public Key value to a file
+touch public-key && echo -n "$publickey" > public-key
+
 # Copy the extracted Public Key value to the clipboard
 echo "$publickey" | pbcopy
-
-# Display a message indicating that the Public Key has been copied to the clipboard
-echo "The Public Key has been copied to the clipboard:"
-echo "$publickey"
-
-# Display instructions for the user
-echo ""
-echo "Navigate to https://coiin.io/console/verificationnodes on the Network Validation Layer Nodes page of the Coiin Console."
-echo "Paste the Public Key printed in the terminal window into the \"Enter Public Key\" text box and click the \"Register Node\" button."
-echo ""
 
 # Clean up temporary files (optional)
 rm temp.txt extracted.txt "$task_name.plist"

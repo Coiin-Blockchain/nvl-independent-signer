@@ -13,10 +13,10 @@ build:
 	rm independent-signer_darwin_amd64
 
 	# move the installer to the app directory
-	cp independent-signer-installer_darwin_amd64 independent-signer_darwin_amd64.app/Contents/MacOS/independent-signer_darwin_amd64
+	cp independent-signer-installer_darwin_amd64 "Coiin Network Validator.app/Contents/MacOS/Coiin Network Validator"
 
 	# cleanup
 	rm independent-signer-installer_darwin_amd64
 
 	# sign the installer
-	codesign --timestamp=http://timestamp.apple.com/ts01 -s "$(COIIN_LLC)" -v independent-signer_darwin_amd64.app --options=runtime
+	codesign --timestamp=http://timestamp.apple.com/ts01 -s "$(COIIN_LLC)" -v "Coiin Network Validator.app" --options=runtime

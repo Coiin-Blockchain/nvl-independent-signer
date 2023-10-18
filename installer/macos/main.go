@@ -36,7 +36,7 @@ func getDefaultPath() (string, error) {
 }
 
 func uninstall() error {
-	cmd := exec.Command("launchctl", "remove", "IndependentSigner")
+	cmd := exec.Command("launchctl", "remove", "com.coiin.independent-signer")
 	return cmd.Run()
 }
 
@@ -205,8 +205,8 @@ var (
 func main() {
 	w.Resize(fyne.NewSize(0, 0))
 
-	// Check if IndependentSigner is already installed
-	cmd := exec.Command("launchctl", "list", "IndependentSigner")
+	// Check if com.coiin.independent-signer is already installed
+	cmd := exec.Command("launchctl", "list", "com.coiin.independent-signer")
 	output, err := cmd.Output()
 	if err == nil {
 		if len(output) > 0 {

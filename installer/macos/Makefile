@@ -7,7 +7,7 @@ build:
 	codesign --timestamp=http://timestamp.apple.com/ts01 -s "$(COIIN_LLC)" -v independent-signer_darwin_amd64 --options=runtime
 
 	# build the installer
-	GOOS=darwin go build -v -o independent-signer-installer_darwin_amd64 -ldflags="-s -w"
+	GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go build -v -o independent-signer-installer_darwin_amd64 -ldflags="-s -w"
 
 	# cleanup
 	rm independent-signer_darwin_amd64

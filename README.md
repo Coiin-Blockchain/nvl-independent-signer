@@ -3,9 +3,13 @@
 ## Requirements
 * Create a [Coiin Console](https://coiin.io/console) account
 * Download the newest release of [nvl-independent-signer](https://github.com/Coiin-Blockchain/nvl-independent-signer/releases) for your OS
-    - Note: macOS users should use the Darwin build
 
-## Register Independent Signer
+## Register Independent Signer From an Installer (Preferred)
+
+1. Download the newest release of the [Coiin Netowrk Validator](https://github.com/Coiin-Blockchain/nvl-independent-signer/releases) installer for your OS
+   - Note: macOS users should download the file ending in .dmg while Windows users should download the file ending in .exe
+
+## Register Independent Signer From a Command Line Interface
 
 <details>
 
@@ -14,7 +18,6 @@
 ### Windows Installation Instructions
 
 1. From the terminal, navigate to the folder where you downloaded the file and execute the independent signer script. The first time will generate a new signing key. Once the new signing key is generated, the Public Key will be printed to the terminal. Copy the Public Key.
-    - Note: Some operating systems like macOS may require updating default security settings and granting execute permission to run the `independent-signer` script.
 
 2. Navigate to the [Register an Independent Node](https://coiin.io/console/verificationnodes) section on the Network Validation Layer Nodes page of the Coiin Console. Paste the Public Key printed in the terminal window from Step 1 into the "Enter Public Key" text box and click the "Register Node" button.
 
@@ -34,7 +37,7 @@ Your Public and Signing Keys are saved in:
 ### Linux and macOS Installation Instructions
 
 1. From a web browser, download the Independent Signer script by navigating to: https://github.com/Coiin-Blockchain/nvl-independent-signer/releases
-    - Select the script for your computer, e.g. _independent-signer_darwin_amd64_ for macOS users
+    - Select the script for your computer, e.g. _independent-signer_darwin_amd64_ for macOS users or __independent-signer_linux_amd64_ for Linux users
     - Save this to a preferred location where it won’t be deleted.
 
 2. Open a new Terminal window (Terminal can be found in the Applications > Utilities folder)

@@ -10,7 +10,7 @@
 
 ## Register Independent Signer From a Command Line Interface
 
-* Download the newest release of the [Independent-Signer](https://github.com/Coiin-Blockchain/nvl-independent-signer/releases) script for your OS
+* Download the newest release of the [Independent-Signer](https://github.com/Coiin-Blockchain/nvl-independent-signer/releases) script for your OS, then follow the instructions below.
 
 <details>
 

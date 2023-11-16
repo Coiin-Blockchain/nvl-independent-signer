@@ -1,8 +1,7 @@
 # Getting Started
 
 ## Requirements
-* Create a [Coiin Console](https://coiin.io/console) account
-* Download the newest release of [nvl-independent-signer](https://github.com/Coiin-Blockchain/nvl-independent-signer/releases) for your OS
+* First create a [Coiin Console](https://coiin.io/console) account
 
 ## Register Independent Signer From an Installer (Preferred)
 

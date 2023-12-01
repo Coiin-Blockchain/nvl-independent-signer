@@ -5,13 +5,19 @@ import (
 	"embed"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"time"
-)
 
-// This project should be able to embed the independent-signer_windows_amd64.exe while building, and extract it when it's running, than run a .bat file that will start the independent-signer_windows_amd64.exe
+	fyne "fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/widget"
+
+	"github.com/atotto/clipboard"
+)
 
 //go:embed independent-signer_windows_amd64.exe
 var independentSigner embed.FS
@@ -19,43 +25,65 @@ var independentSigner embed.FS
 //go:embed script.bat
 var script embed.FS
 
-func main() {
+func getDefaultPath() (string, error) {
 	// Get the default path for the independent-signer_windows_amd64.exe
 	configDir, err := os.UserConfigDir()
 	if err != nil {
 		configDir, err = os.Getwd()
 		if err != nil {
-			log.Fatal("could not find working directory")
+			return "", fmt.Errorf("could not find working directory: %w", err)
 		}
 	}
-	defaultPath := filepath.Join(configDir, "coiin", "nvl", "independent-signer")
+	return filepath.Join(configDir, "coiin", "nvl", "independent-signer"), nil
+}
+
+func uninstall() error {
+	cmd := exec.Command("powershell", "-NoProfile", "Unregister-ScheduledTask", "-TaskName", "IndependentSigner", "-Confirm:$false")
+	return cmd.Run()
+}
+
+func install() (string, error) {
+
+	defaultPath, err := getDefaultPath()
+	if err != nil {
+		return "", err
+	}
 
 	// Set the paths for the temporary files
 	tempExe := filepath.Join(defaultPath, "independent-signer_windows_amd64.exe")
+	err = os.MkdirAll(filepath.Dir(tempExe), 0755)
+	if err != nil {
+		return "", err
+	}
+
 	tempBat := filepath.Join(defaultPath, "script.bat")
+	err = os.MkdirAll(filepath.Dir(tempBat), 0755)
+	if err != nil {
+		return "", err
+	}
 
 	// Read the independent-signer_windows_amd64.exe from the embed.FS
 	exeContent, err := independentSigner.ReadFile("independent-signer_windows_amd64.exe")
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	// Read the script.bat from the embed.FS
 	batContent, err := script.ReadFile("script.bat")
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	// Write the independent-signer_windows_amd64.exe to the temp directory
 	err = os.WriteFile(tempExe, exeContent, 0755)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	// Write the script.bat to the temp directory
 	err = os.WriteFile(tempBat, batContent, 0755)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	// Print a message to the console
@@ -67,27 +95,157 @@ func main() {
 	// Change the working directory to defaultPath
 	err = os.Chdir(defaultPath)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	// Run the script.bat
 	cmd := exec.Command(tempBat)
-
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &out
 	err = cmd.Run()
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
-	// Print the output of the script to the console
-	fmt.Println(out.String())
+	return out.String(), nil
+}
 
-	// Print a message to the console
-	fmt.Print("Independent Signer installed successfully!\n\n")
+func showCloseButton(installer *widget.Label) {
+	w.SetContent(container.NewVBox(
+		installer,
+		widget.NewButton("Close", func() {
+			w.Close()
+		}),
+	))
+	w.Resize(fyne.NewSize(0, 0))
+}
 
-	// Pause the program
-	var input string
-	fmt.Scanln(&input)
+func copyPublicKeyToClipboard() (string, error) {
+	defaultPath, err := getDefaultPath()
+	if err != nil {
+		return "", err
+	}
+	publicKeyFile := filepath.Join(defaultPath, "public-key")
+
+	// Read the public key from the default path
+	content, err := os.ReadFile(publicKeyFile)
+	if err != nil {
+		return "", err
+	}
+	content = bytes.TrimSpace(content)
+
+	err = clipboard.WriteAll(string(content))
+	if err != nil {
+		return "", err
+	}
+
+	return string(content), nil
+}
+
+func uninstallGUI(installer *widget.Label) {
+	defer showCloseButton(installer)
+	err := uninstall()
+	if err != nil {
+		installer.SetText(fmt.Sprintf("An error occurred while uninstalling %s: %s", appName, err))
+		return
+	}
+	installer.SetText(fmt.Sprintf("%s was uninstalled successfully!", appName))
+}
+
+func installGUI() {
+	gui := widget.NewLabel(fmt.Sprintf("Installing %s ...", appName))
+	w.SetContent(container.NewVBox(
+		gui,
+		widget.NewProgressBarInfinite(),
+	))
+	w.Resize(fyne.NewSize(0, 0))
+
+	_, err := install()
+	if err != nil {
+		gui = widget.NewLabel(fmt.Sprintf("An error occurred while installing %s: %s", appName, err))
+		w.SetContent(container.NewVBox(
+			gui,
+			widget.NewButton("Close", func() {
+				w.Close()
+			}),
+		))
+		return
+	}
+
+	url := &url.URL{
+		Scheme: "https",
+		Host:   "coiin.io",
+		Path:   "/console/verificationnodes",
+	}
+
+	publicKey, _ := copyPublicKeyToClipboard()
+	w.SetContent(container.NewVBox(
+		widget.NewLabel(fmt.Sprintf("The Public Key has been copied to the clipboard:\n%s", publicKey)),
+		widget.NewHyperlink("\nNavigate to the Network Validation Layer Nodes page on the Coiin Console.", url),
+		widget.NewLabel("Paste the Public Key printed in the terminal window into the \"Enter Public Key\" text box and click the \"Register Node\" button."),
+		widget.NewLabel(fmt.Sprintf("\n%s was installed successfully", appName)),
+		widget.NewButton("Close", func() {
+			w.Close()
+		}),
+	))
+}
+
+func copyPublicKeyGUI(installer *widget.Label) {
+	defer showCloseButton(installer)
+	publickey, err := copyPublicKeyToClipboard()
+	if err != nil {
+		installer.SetText(fmt.Sprintf("An error occurred while installing %s: %s", appName, err))
+		return
+	}
+	installer.SetText(fmt.Sprintf("The Public Key has being copied to your clipboard: \n\n%s", publickey))
+}
+
+const (
+	appName = "Coiin Network Validator"
+)
+
+var (
+	a = app.New()
+	w = a.NewWindow(appName)
+)
+
+func main() {
+	w.Resize(fyne.NewSize(0, 0))
+
+	// Check if com.coiin.independent-signer is already installed
+	cmd := exec.Command("powershell", "-NoProfile", "Get-ScheduledTask", "|", "?", "TaskName", "-eq", "IndependentSigner")
+	output, err := cmd.Output()
+	if err != nil {
+		log.Printf("Error encountered while checking if IndependentSigner is installed: $v\n", err)
+		log.Printf("Shutting down installer in 10 seconds\n")
+		time.Sleep(time.Second * 10)
+		w.Close()
+	}
+	
+	if len(output) > 0 {
+		installer := widget.NewLabel(fmt.Sprintf("%s is already installed.\nDo you want to uninstall or override the current version?", appName))
+		w.SetContent(container.NewVBox(
+			installer,
+			widget.NewButton("1. Override the current version", func() {
+				installGUI()
+			}),
+			widget.NewButton("2. Uninstall the current version", func() {
+				uninstallGUI(installer)
+			}),
+			widget.NewButton("3. Copy your Public Key to the clipboard", func() {
+				copyPublicKeyGUI(installer)
+			}),
+		))
+	} else {
+		installer := widget.NewLabel(fmt.Sprintf("Do you want to install %s?", appName))
+		w.SetContent(container.NewVBox(
+			installer,
+			widget.NewButton("1. Yes", func() {
+				installGUI()
+			}),
+		))
+	}
+
+	w.ShowAndRun()
 }

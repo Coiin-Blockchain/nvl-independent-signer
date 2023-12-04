@@ -24,7 +24,7 @@ func NewCoiinInstaller(independentSigner, script *embed.FS) *CoiinInstaller {
 }
 
 func (ci *CoiinInstaller) IsInstalled() (bool, error) {
-	cmd := exec.Command("powershell", "-NoProfile", "Get-ScheduledTask", "|", "?", "TaskName", "-eq", "IndependentSigner")
+	cmd := exec.Command("powershell", "-NoProfile", "-WindowStyle", "hidden", "Get-ScheduledTask", "|", "?", "TaskName", "-eq", "IndependentSigner")
 	output, err := cmd.Output()
 	if err != nil {
 		return false, err
@@ -104,7 +104,8 @@ func (ci *CoiinInstaller) Uninstall() error {
 		return err
 	}
 
-	cmd := exec.Command("powershell", "-NoProfile", "Unregister-ScheduledTask", "-TaskName", "IndependentSigner", "-Confirm:$false")
+	cmd := exec.Command("powershell", "-NoProfile", "-WindowStyle", "hidden", "Unregister-ScheduledTask", "-TaskName", "IndependentSigner", "-Confirm:$false")
+	cmd.Stdout = nil
 	return cmd.Run()
 }
 

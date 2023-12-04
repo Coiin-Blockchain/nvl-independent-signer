@@ -9,7 +9,7 @@ build:
 	# https://stackoverflow.com/questions/74334529/go-fyne-project-cant-cross-compile-from-linux-to-windows
 	# https://developer.fyne.io/started/cross-compiling
 	# build the installer
-	env CGO_ENABLED=1 GOOS=windows GOARCH=amd64 CC=/usr/bin/x86_64-w64-mingw32-gcc go build -v -o independent-signer-installer_windows_amd64.exe -ldflags="-s -w"
+	env CGO_ENABLED=1 GOOS=windows GOARCH=amd64 CC=/usr/bin/x86_64-w64-mingw32-gcc go build -v -o independent-signer-installer_windows_amd64.exe -ldflags="-s -w -H=windowsgui"
 
 	# cleanup
 	rm independent-signer_windows_amd64.exe

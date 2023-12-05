@@ -3,10 +3,10 @@ package coiininstaller
 import (
 	"bytes"
 	"embed"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"time"
 
 	"github.com/Coiin-Blockchain/nvl-independent-signer/installer/windows/src/coiinpath"
 	coiincommon "github.com/Coiin-Blockchain/nvl-independent-signer/installer/windows/src/coincommon"
@@ -52,6 +52,12 @@ func (ci *CoiinInstaller) Install() (string, error) {
 		return "", err
 	}
 
+	tempAuxiliaryBat := filepath.Join(defaultPath, "auxiliary-script.bat")
+	err = os.MkdirAll(filepath.Dir(tempAuxiliaryBat), 0755)
+	if err != nil {
+		return "", err
+	}
+
 	// Read the independent-signer_windows_amd64.exe from the embed.FS
 	exeContent, err := ci.independentSigner.ReadFile("independent-signer_windows_amd64.exe")
 	if err != nil {
@@ -76,8 +82,11 @@ func (ci *CoiinInstaller) Install() (string, error) {
 		return "", err
 	}
 
-	// Wait for 2 seconds
-	time.Sleep(2 * time.Second)
+	cmdCommand := []byte(fmt.Sprintf("START /MIN CMD.EXE /C %v", tempBat))
+	err = os.WriteFile(tempAuxiliaryBat, cmdCommand, 0755)
+	if err != nil {
+		return "", err
+	}
 
 	// Change the working directory to defaultPath
 	err = os.Chdir(defaultPath)
@@ -85,8 +94,8 @@ func (ci *CoiinInstaller) Install() (string, error) {
 		return "", err
 	}
 
-	// Run the script.bat
-	cmd := exec.Command(tempBat)
+	// Run the auxiliary-script.bat
+	cmd := exec.Command(tempAuxiliaryBat)
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &out

@@ -3,7 +3,6 @@ package coiininstaller
 import (
 	"bytes"
 	"embed"
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -52,12 +51,6 @@ func (ci *CoiinInstaller) Install() (string, error) {
 		return "", err
 	}
 
-	tempAuxiliaryBat := filepath.Join(defaultPath, "auxiliary-script.bat")
-	err = os.MkdirAll(filepath.Dir(tempAuxiliaryBat), 0755)
-	if err != nil {
-		return "", err
-	}
-
 	// Read the independent-signer_windows_amd64.exe from the embed.FS
 	exeContent, err := ci.independentSigner.ReadFile("independent-signer_windows_amd64.exe")
 	if err != nil {
@@ -82,20 +75,14 @@ func (ci *CoiinInstaller) Install() (string, error) {
 		return "", err
 	}
 
-	cmdCommand := []byte(fmt.Sprintf("START /MIN CMD.EXE /C %v", tempBat))
-	err = os.WriteFile(tempAuxiliaryBat, cmdCommand, 0755)
-	if err != nil {
-		return "", err
-	}
-
 	// Change the working directory to defaultPath
 	err = os.Chdir(defaultPath)
 	if err != nil {
 		return "", err
 	}
 
-	// Run the auxiliary-script.bat
-	cmd := exec.Command(tempAuxiliaryBat)
+	// Run the script.bat
+	cmd := exec.Command(tempBat)
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &out

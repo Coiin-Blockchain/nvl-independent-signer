@@ -23,8 +23,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/crypto"
 	"io"
 	"log"
 	"net/http"
@@ -32,6 +30,9 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 const (
@@ -65,10 +66,11 @@ func init() {
 }
 
 type NVLBlockHeader struct {
-	Type       string `json:"type"`
-	PriorBlock string `json:"priorBlock"`
-	Timestamp  string `json:"timestamp"`
-	PublicKey  string `json:"publicKey"`
+	Type        string `json:"type"`
+	PriorBlock  string `json:"priorBlock"`
+	Timestamp   string `json:"timestamp"`
+	PublicKey   string `json:"publicKey"`
+	CoiinSupply string `json:"coiinSupply" datastore:"coiinSupply"`
 }
 
 type NVLBlockSeal struct {
@@ -100,6 +102,10 @@ func (b *NVLBlock) MarshalForSigning() ([]byte, error) {
 		},
 		"blocks":  blocks,
 		"version": b.Version,
+	}
+
+	if b.Header.CoiinSupply != "" {
+		data["header"].(map[string]string)["coiinSupply"] = b.Header.CoiinSupply
 	}
 
 	return json.Marshal(data)

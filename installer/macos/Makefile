@@ -1,6 +1,6 @@
 build:
 	# build the main binaries and copy them to the installer directory
-	cd ../../ && make build
+	cd ../../ && make darwin
 	cp ../../build/independent-signer_darwin_amd64 independent-signer_darwin_amd64
 
 	# sign the binary

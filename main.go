@@ -43,7 +43,7 @@ const (
 )
 
 var (
-	Version = "v0.0.0"
+	Version = "v0.0.1"
 
 	dataDir string
 
@@ -376,11 +376,13 @@ func postIndependentNVLBlock(block *NVLBlock) error {
 	log.Println("Posting new block to NVL Proxy")
 
 	body := struct {
-		Version string    `json:"version"`
-		Block   *NVLBlock `json:"block"`
+		Version                  string    `json:"version"`
+		Block                    *NVLBlock `json:"block"`
+		IndependentSignerVersion string    `json:"independentSignerVersion"`
 	}{
-		Version: "1",
-		Block:   block,
+		Version:                  "1",
+		Block:                    block,
+		IndependentSignerVersion: Version,
 	}
 
 	jsonBody, err := json.Marshal(body)

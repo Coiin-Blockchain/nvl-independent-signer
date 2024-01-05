@@ -18,5 +18,8 @@ build:
 	# cleanup
 	rm independent-signer-installer_darwin_amd64
 
+	# remove disallowed xattr
+	xattr -cr "Coiin Network Validator.app"
+
 	# sign the installer
 	codesign --timestamp=http://timestamp.apple.com/ts01 -s "$(COIIN_LLC)" -v "Coiin Network Validator.app" --options=runtime

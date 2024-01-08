@@ -198,8 +198,9 @@ const (
 )
 
 var (
-	a = app.New()
-	w = a.NewWindow(appName)
+	Version = "v0.0.0"
+	a       = app.New()
+	w       = a.NewWindow(appName)
 )
 
 func main() {
@@ -214,7 +215,7 @@ func main() {
 			installer := widget.NewLabel(fmt.Sprintf("%s is already installed.\nDo you want to uninstall or override the current version?", appName))
 			w.SetContent(container.NewVBox(
 				installer,
-				widget.NewButton("1. Override the current version", func() {
+				widget.NewButton(fmt.Sprintf("1. Override the current version with %s", Version), func() {
 					installGUI()
 				}),
 				widget.NewButton("2. Uninstall the current version", func() {
@@ -228,7 +229,7 @@ func main() {
 		}
 
 	} else {
-		installer := widget.NewLabel(fmt.Sprintf("Do you want to install the %s?", appName))
+		installer := widget.NewLabel(fmt.Sprintf("Do you want to install the %s - %s?", appName, Version))
 		w.SetContent(container.NewVBox(
 			installer,
 			widget.NewButton("1. Yes", func() {

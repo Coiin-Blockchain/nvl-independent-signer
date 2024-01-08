@@ -18,14 +18,16 @@ type CoiinGUI struct {
 	w              fyne.Window
 	a              fyne.App
 	appName        string
+	appVersion     string
 	coiinInstaller *coiininstaller.CoiinInstaller
 }
 
-func NewGUI(appName string, coiinInstaller *coiininstaller.CoiinInstaller) *CoiinGUI {
+func NewGUI(appName, appVersion string, coiinInstaller *coiininstaller.CoiinInstaller) *CoiinGUI {
 	a := app.New()
 	w := a.NewWindow(appName)
 	return &CoiinGUI{
 		appName:        appName,
+		appVersion:     appVersion,
 		a:              a,
 		w:              w,
 		coiinInstaller: coiinInstaller,
@@ -48,7 +50,7 @@ func (cgui *CoiinGUI) StartInstaller() {
 		installer := widget.NewLabel(fmt.Sprintf("%s is already installed.\nDo you want to uninstall or override the current version?", cgui.appName))
 		cgui.w.SetContent(container.NewVBox(
 			installer,
-			widget.NewButton("1. Override the current version", func() {
+			widget.NewButton(fmt.Sprintf("1. Override the current version with %s", cgui.appVersion), func() {
 				cgui.installGUI()
 			}),
 			widget.NewButton("2. Uninstall the current version", func() {
@@ -59,7 +61,7 @@ func (cgui *CoiinGUI) StartInstaller() {
 			}),
 		))
 	} else {
-		installer := widget.NewLabel(fmt.Sprintf("Do you want to install %s?", cgui.appName))
+		installer := widget.NewLabel(fmt.Sprintf("Do you want to install the %s - %s?", cgui.appName, cgui.appVersion))
 		cgui.w.SetContent(container.NewVBox(
 			installer,
 			widget.NewButton("1. Yes", func() {

@@ -10,6 +10,7 @@
   
 2. Run the installer. 
     - If you don't see your Public Key after running the installer, try running it again.
+    
     <img src = "/assets/installer.png" width=50% height=50%>
     <img src = "/assets/installcomplete.png" width=50% height=50%>
    

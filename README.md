@@ -19,7 +19,7 @@
    - Lose track of your Public Key? No problem, just the installer again and choose the "Copy your Public Key to the clipboard" option.
 4. You're done! The independent signer script will quietly run in the background every 30 minutes to look for new NVL blocks to sign with your Public Key. No need to keep app open.
 
-## Register Independent Signer From a Command Line Interface
+## Register Independent Signer From a Command Line Interface (Technical)
 
 * Download the latest release of the [Independent-Signer](https://github.com/Coiin-Blockchain/nvl-independent-signer/releases) script for your OS, then follow the instructions below.
 

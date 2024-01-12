@@ -5,8 +5,12 @@
 
 ## Register Independent Signer From an Installer (Easy)
 
-1. Download the latest release of the [Coiin Network Validator](https://github.com/Coiin-Blockchain/nvl-independent-signer/releases) installer for your OS
+1. Download the latest release of the [Coiin Network Validator](https://github.com/Coiin-Blockchain/nvl-independent-signer/releases) installer for your OS.
    - Note: macOS users should download the file ending in .dmg, while Windows users should download the file ending in .exe
+  
+2. Run the installer. 
+   - If you don't see your Public Key after running the installer, try running it again.
+3. Paste the Public Key from the installer into the Validation Nodes page of the Coiin Console and click Register.
 
 ## Register Independent Signer From a Command Line Interface
 

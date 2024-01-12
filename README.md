@@ -10,13 +10,13 @@
   
 2. Run the installer. 
     - If you don't see your Public Key after running the installer, try running it again.
-    - 
+    <br>
     <img src = "/assets/installer.png" width=50% height=50%>
     <img src = "/assets/installcomplete.png" width=50% height=50%>
    
 3. Paste the Public Key from the installer into the [Validation Nodes](https://coiin.io/console/verificationnodes) page of the Coiin Console and click Register Node. 
    - This will associate your Public Key with your Coiin Console account to ensure you get rewarded for mining NVL blocks.
-4. You're done! The independent signer script will automatically run every 30 minutes and look for new NVL blocks to sign with your Public Key
+4. You're done! The independent signer script will quietly run in the background every 30 minutes to look for new NVL blocks to sign with your Public Key. No need to keep app open.
 
 ## Register Independent Signer From a Command Line Interface
 

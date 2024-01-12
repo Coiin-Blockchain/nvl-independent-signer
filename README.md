@@ -3,7 +3,7 @@
 ## Requirements
 * Create a [Coiin Console](https://coiin.io/console) account
 
-## Register Independent Signer From an Installer (Easy)
+## Register Independent Signer From an Installer (Easy Install)
 
 1. Download the latest release of the [Coiin Network Validator](https://github.com/Coiin-Blockchain/nvl-independent-signer/releases) installer for your OS.
    - Note: macOS users should download the file ending in .dmg, while Windows users should download the file ending in .exe

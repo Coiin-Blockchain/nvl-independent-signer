@@ -10,7 +10,7 @@
   
 2. Run the installer. 
    - If you don't see your Public Key after running the installer, try running it again.
-3. Paste the Public Key from the installer into the Validation Nodes page of the Coiin Console and click Register.
+3. Paste the Public Key from the installer into the [Validation Nodes](https://coiin.io/console/verificationnodes) page of the Coiin Console and click Register Node.
 
 ## Register Independent Signer From a Command Line Interface
 

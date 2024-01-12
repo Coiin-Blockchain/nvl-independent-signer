@@ -9,9 +9,9 @@
    - Note: macOS users should download the file ending in .dmg, while Windows users should download the file ending in .exe
   
 2. Run the installer. 
+    - If you don't see your Public Key after running the installer, try running it again.
     <img src = "/assets/installer.png" width=50% height=50%>
     <img src = "/assets/installcomplete.png" width=50% height=50%>
-   - If you don't see your Public Key after running the installer, try running it again.
    
 3. Paste the Public Key from the installer into the [Validation Nodes](https://coiin.io/console/verificationnodes) page of the Coiin Console and click Register Node. 
    - This will associate your Public Key with your Coiin Console account to ensure you get rewarded for mining NVL blocks.

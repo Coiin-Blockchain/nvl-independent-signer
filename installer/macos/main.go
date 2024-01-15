@@ -145,7 +145,7 @@ func uninstallGUI(installer *widget.Label) {
 	installer.SetText(fmt.Sprintf("%s was uninstalled successfully!", appName))
 }
 
-func installGUI() {
+func installGUI(isUpgrade bool) {
 	gui := widget.NewLabel(fmt.Sprintf("Installing %s ...", appName))
 	w.SetContent(container.NewVBox(
 		gui,
@@ -172,6 +172,18 @@ func installGUI() {
 	}
 
 	publicKey, _ := copyPublicKeyToClipboard()
+
+	if isUpgrade {
+		w.SetContent(container.NewVBox(
+			widget.NewLabel(fmt.Sprintf("The Public Key has been copied to the clipboard:\n%s", publicKey)),
+			widget.NewLabel(fmt.Sprintf("\n%s was upgraded successfully. No further action is necessary", appName)),
+			widget.NewButton("Close", func() {
+				os.Exit(1)
+			}),
+		))
+		return
+	}
+
 	w.SetContent(container.NewVBox(
 		widget.NewLabel(fmt.Sprintf("The Public Key has been copied to the clipboard:\n%s", publicKey)),
 		widget.NewHyperlink("\nNavigate to the Network Validation Layer Nodes page on the Coiin Console.", url),
@@ -216,7 +228,7 @@ func main() {
 			w.SetContent(container.NewVBox(
 				installer,
 				widget.NewButton(fmt.Sprintf("1. Override the current version with %s", Version), func() {
-					installGUI()
+					installGUI(true)
 				}),
 				widget.NewButton("2. Uninstall the current version", func() {
 					uninstallGUI(installer)
@@ -233,7 +245,7 @@ func main() {
 		w.SetContent(container.NewVBox(
 			installer,
 			widget.NewButton("1. Yes", func() {
-				installGUI()
+				installGUI(false)
 			}),
 		))
 

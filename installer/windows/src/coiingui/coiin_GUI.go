@@ -51,7 +51,7 @@ func (cgui *CoiinGUI) StartInstaller() {
 		cgui.w.SetContent(container.NewVBox(
 			installer,
 			widget.NewButton(fmt.Sprintf("1. Override the current version with %s", cgui.appVersion), func() {
-				cgui.installGUI()
+				cgui.installGUI(true)
 			}),
 			widget.NewButton("2. Uninstall the current version", func() {
 				cgui.uninstallGUI(installer)
@@ -65,7 +65,7 @@ func (cgui *CoiinGUI) StartInstaller() {
 		cgui.w.SetContent(container.NewVBox(
 			installer,
 			widget.NewButton("1. Yes", func() {
-				cgui.installGUI()
+				cgui.installGUI(false)
 			}),
 		))
 	}
@@ -93,7 +93,7 @@ func (cgui *CoiinGUI) uninstallGUI(installer *widget.Label) {
 	installer.SetText(fmt.Sprintf("%s was uninstalled successfully!", cgui.appName))
 }
 
-func (cgui *CoiinGUI) installGUI() {
+func (cgui *CoiinGUI) installGUI(isUpgrade bool) {
 	widgetLabel := widget.NewLabel(fmt.Sprintf("Installing %s ...", cgui.appName))
 	cgui.w.SetContent(container.NewVBox(
 		widgetLabel,
@@ -120,6 +120,18 @@ func (cgui *CoiinGUI) installGUI() {
 	}
 
 	publicKey, _ := publickey.CopyPublicKeyToClipboard()
+
+	if isUpgrade {
+		cgui.w.SetContent(container.NewVBox(
+			widget.NewLabel(fmt.Sprintf("The Public Key has been copied to the clipboard:\n%s", publicKey)),
+			widget.NewLabel(fmt.Sprintf("\n%s was upgraded successfully. No further action is necessary", cgui.appName)),
+			widget.NewButton("Close", func() {
+				cgui.w.Close()
+			}),
+		))
+		return
+	}
+
 	cgui.w.SetContent(container.NewVBox(
 		widget.NewLabel(fmt.Sprintf("The Public Key has been copied to the clipboard:\n%s", publicKey)),
 		widget.NewHyperlink("\nNavigate to the Network Validation Layer Nodes page on the Coiin Console.", url),

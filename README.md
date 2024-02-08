@@ -1,7 +1,7 @@
 # Getting Started
 
 ## Requirements
-* Create a [Coiin Console](https://coiin.io/console) account
+* Create a [Coiin Console](https://coiin.io/) account
 
 ## Register Independent Signer From an Installer (Easy Install)
 
@@ -14,7 +14,7 @@
     <img src = "/assets/installer.png" width=50% height=50%>
     <img src = "/assets/installcomplete.png" width=50% height=50%>
    
-3. Paste the Public Key from the installer into the [Validation Nodes](https://coiin.io/console/verificationnodes) page of the Coiin Console and click Register Node. 
+3. Paste the Public Key from the installer into the [Validation Nodes](https://coiin.io/verificationnodes) page of the Coiin Console and click Register Node. 
    - This will associate your Public Key with your Coiin Console account to ensure you get rewarded for mining NVL blocks.
    - Lose track of your Public Key? No problem, just the installer again and choose the "Copy your Public Key to the clipboard" option.
 4. You're done! The independent signer script will quietly run in the background every 30 minutes to look for new NVL blocks to sign with your Public Key. No need to keep app open.
@@ -31,7 +31,7 @@
 
 1. From the terminal, navigate to the folder where you downloaded the file and execute the independent signer script. The first time will generate a new signing key. Once the new signing key is generated, the Public Key will be printed to the terminal. Copy the Public Key.
 
-2. Navigate to the [Register an Independent Node](https://coiin.io/console/verificationnodes) section on the Network Validation Layer Nodes page of the Coiin Console. Paste the Public Key printed in the terminal window from Step 1 into the "Enter Public Key" text box and click the "Register Node" button.
+2. Navigate to the [Register an Independent Node](https://coiin.io/verificationnodes) section on the Network Validation Layer Nodes page of the Coiin Console. Paste the Public Key printed in the terminal window from Step 1 into the "Enter Public Key" text box and click the "Register Node" button.
 
 3. After the signing key is generated and the public key is saved to your Coiin Console account, you can run `independent-signer` from the terminal at any time to sign the latest NVL Proxy block and post it to the NVL Proxy.
     - Note: to make this easy, it is recommended to set up a cron job to execute the `independent-signer` script once every 30 minutes.

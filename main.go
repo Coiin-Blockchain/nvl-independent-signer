@@ -39,7 +39,7 @@ const (
 	signingKeyFilename     = "signing-key"
 	priorBlockHashFilename = "prior-block-hash"
 
-	nvlBaseUrl = "https://nvl.api.coiin.io"
+	nvlBaseUrl = "https://nvl.api.coiin.ai"
 )
 
 var (

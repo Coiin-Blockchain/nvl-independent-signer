@@ -206,7 +206,7 @@ func copyPublicKeyGUI(installer *widget.Label) {
 }
 
 const (
-	appName = "Coiin Network Validator"
+	appName = "Raiinmaker Network Validator"
 )
 
 var (

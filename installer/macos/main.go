@@ -167,8 +167,8 @@ func installGUI(isUpgrade bool) {
 
 	url := &url.URL{
 		Scheme: "https",
-		Host:   "coiin.io",
-		Path:   "/console/verificationnodes",
+		Host:   "coiin.ai",
+		Path:   "/verificationnodes",
 	}
 
 	publicKey, _ := copyPublicKeyToClipboard()
@@ -206,7 +206,7 @@ func copyPublicKeyGUI(installer *widget.Label) {
 }
 
 const (
-	appName = "Coiin Network Validator"
+	appName = "Raiinmaker Network Validator"
 )
 
 var (

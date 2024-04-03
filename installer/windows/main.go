@@ -13,7 +13,7 @@ var independentSigner embed.FS
 //go:embed script.bat
 var script embed.FS
 
-const appName = "Coiin Network Validator"
+const appName = "Raiinmaker Network Validator"
 
 var Version = "v0.0.0"
 

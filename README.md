@@ -1,7 +1,7 @@
 # Getting Started
 
 ## Requirements
-* Create a [Coiin Console](https://coiin.io/) account
+* Create a [Coiin Console](https://coiin.ai/) account
 
 ## Register Independent Signer From an Installer (Easy Install)
 

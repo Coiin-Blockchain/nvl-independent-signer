@@ -115,8 +115,8 @@ func (cgui *CoiinGUI) installGUI(isUpgrade bool) {
 
 	url := &url.URL{
 		Scheme: "https",
-		Host:   "coiin.io",
-		Path:   "/console/verificationnodes",
+		Host:   "coiin.ai",
+		Path:   "/verificationnodes",
 	}
 
 	publicKey, _ := publickey.CopyPublicKeyToClipboard()

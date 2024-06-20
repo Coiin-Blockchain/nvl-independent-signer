@@ -142,6 +142,11 @@ Build
     go mod tidy
     go build
 
+Run
+   go run main.go
+
+Copy the Public Key and paste it in the Independent Node Status, in Coiin Console.
+
 # Support
 
 * [Submit issue](https://github.com/Coiin-Blockchain/nvl-independent-signer/issues)

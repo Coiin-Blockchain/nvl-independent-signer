@@ -134,11 +134,11 @@ Your Public and Signing Keys are saved in:
 Clone source code
 
     mkdir ~/go/src/github.com/Coiin-Blockchain
-    cd ~/go/src/github.com/Coiin-Blockchain/nvl-independent-signer
+    cd ~/go/src/github.com/Coiin-Blockchain
     git clone https://github.com/Coiin-Blockchain/nvl-independent-signer.git
 
 Build
-
+    cd ~/go/src/github.com/Coiin-Blockchain/nvl-independent-signer
     go mod tidy
     go build
 

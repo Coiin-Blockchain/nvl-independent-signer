@@ -15,13 +15,13 @@ build:
 	rm independent-signer_darwin_amd64
 
 	# move the installer to the app directory
-	cp independent-signer-installer_darwin_amd64 "Raiinmaker Network Validator.app/Contents/MacOS/Raiinmaker Network Validator"
+	cp independent-signer-installer_darwin_amd64 "Raiinmaker-Network-Validator.app/Contents/MacOS/Raiinmaker-Network-Validator"
 
 	# cleanup
 	rm independent-signer-installer_darwin_amd64
 
 	# remove disallowed xattr
-	xattr -cr "Raiinmaker Network Validator.app"
+	xattr -cr "Raiinmaker-Network-Validator.app"
 
 	# sign the installer
-	codesign --timestamp=http://timestamp.apple.com/ts01 -s "$(COIIN_LLC)" -v "Raiinmaker Network Validator.app" --options=runtime
+	codesign --timestamp=http://timestamp.apple.com/ts01 -s "$(COIIN_LLC)" -v "Raiinmaker-Network-Validator.app" --options=runtime

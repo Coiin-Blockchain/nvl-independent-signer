@@ -338,14 +338,14 @@ func createIndependentNVLBlock(signingKey *ecdsa.PrivateKey, block *NVLBlock, pr
 	log.Println("Creating independent NVL block")
 
 	publicKey := strings.ToLower(hex.EncodeToString(crypto.FromECDSAPub(signingKey.Public().(*ecdsa.PublicKey))))
-
 	return &NVLBlock{
 		Version: "1",
 		Header: &NVLBlockHeader{
-			Type:       "INDEPENDENT",
-			PriorBlock: priorHash,
-			Timestamp:  fmt.Sprintf("%d", time.Now().Unix()),
-			PublicKey:  publicKey,
+			Type:        "INDEPENDENT",
+			PriorBlock:  priorHash,
+			Timestamp:   fmt.Sprintf("%d", time.Now().Unix()),
+			PublicKey:   publicKey,
+			CoiinSupply: block.Header.CoiinSupply,
 		},
 		Blocks: []string{block.Seal.Proofs},
 		Seal:   &NVLBlockSeal{},

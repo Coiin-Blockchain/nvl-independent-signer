@@ -119,7 +119,7 @@ It should read something similar to:
 
 Your Public and Signing Keys are saved in:
 
-    # Mac
+    # Linux/Mac
     ~/.config/coiin/nvl/independent-signer
 
 </details>

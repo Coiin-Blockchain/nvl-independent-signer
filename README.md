@@ -131,11 +131,10 @@ Your Public and Signing Keys are saved in:
 * [Go v1.20+](https://go.dev/dl/)
 
 
-Clone source code
-
-    mkdir ~/go/src/github.com/Coiin-Blockchain
-    cd ~/go/src/github.com/Coiin-Blockchain
-    git clone https://github.com/Coiin-Blockchain/nvl-independent-signer.git
+Clone source code into desired folder. For this, you have to access the desired folder and run the following command:
+```
+git clone https://github.com/Coiin-Blockchain/nvl-independent-signer.git
+```
 
 #### Build
 Access the folder containing the main.go file and then execute the following command:

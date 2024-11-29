@@ -22,6 +22,7 @@ import (
 	"crypto/ecdsa"
 	"encoding/hex"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -38,8 +39,6 @@ import (
 const (
 	signingKeyFilename     = "signing-key"
 	priorBlockHashFilename = "prior-block-hash"
-
-	nvlBaseUrl = "https://nvl.api.coiin.ai"
 )
 
 var (
@@ -49,6 +48,8 @@ var (
 
 	signingKeyFilePath     string
 	priorBlockHashFilePath string
+
+	nvlBaseURL string
 )
 
 func init() {
@@ -63,6 +64,9 @@ func init() {
 
 	signingKeyFilePath = filepath.Join(dataDir, signingKeyFilename)
 	priorBlockHashFilePath = filepath.Join(dataDir, priorBlockHashFilename)
+
+	flag.StringVar(&nvlBaseURL, "nvlBaseURL", "https://nvl.api.coiin.ai", "Host that would be called to sign blocks to")
+	flag.Parse()
 }
 
 type NVLBlockHeader struct {
@@ -216,7 +220,7 @@ func generateSigningKey() error {
 func loadVerifyingKey() ([]byte, error) {
 	log.Println("Loading NVL Proxy verifying key")
 
-	resp, err := http.Get(nvlBaseUrl + "/api/v1/status")
+	resp, err := http.Get(nvlBaseURL + "/api/v1/status")
 	if err != nil {
 		return nil, err
 	}
@@ -248,7 +252,7 @@ func fetchLatestNVLBlock() (*NVLBlock, error) {
 		return nil, err
 	}
 
-	resp, err := http.Get(nvlBaseUrl + "/api/v1/blocks/" + blockHash + "?raw=true")
+	resp, err := http.Get(nvlBaseURL + "/api/v1/blocks/" + blockHash + "?raw=true")
 	if err != nil {
 		return nil, err
 	}
@@ -275,7 +279,7 @@ func fetchLatestNVLBlock() (*NVLBlock, error) {
 }
 
 func fetchLatestNVLBlockHash() (string, error) {
-	resp, err := http.Get(nvlBaseUrl + "/api/v1/blocks?size=1")
+	resp, err := http.Get(nvlBaseURL + "/api/v1/blocks?size=1")
 	if err != nil {
 		return "", err
 	}
@@ -391,7 +395,7 @@ func postIndependentNVLBlock(block *NVLBlock) error {
 	}
 
 	resp, err := http.Post(
-		nvlBaseUrl+"/api/v1/independent/enqueue",
+		nvlBaseURL+"/api/v1/independent/enqueue",
 		"application/json",
 		bytes.NewBuffer(jsonBody),
 	)
